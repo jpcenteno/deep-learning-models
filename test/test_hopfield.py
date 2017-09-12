@@ -16,31 +16,30 @@ class HopfieldNetworkTest(unittest.TestCase):
         # The same, in matrix form.
         self.patterns_A_matrix = np.matrix(self.patterns_A)
 
+        # patternsB: simple set of patterns.
+        self.patterns_B_X = np.matrix([[1,  1,  1,  1],
+                                       [1, -1,  1, -1],
+                                       [1,  1, -1, -1]])
+        self.patterns_B_W = (1/4) * np.matrix([[ 0,  1,  1, -1],
+                                               [ 1,  0, -1,  1],
+                                               [ 1, -1,  0,  1],
+                                               [-1,  1,  1,  0]])
     def test_fit(self):
         '''
         Tests that the `fit` method yields the correct state for some simple
         matrix of pattens.
         '''
 
-        # Test data
-        X = np.matrix([[1,  1,  1,  1],
-                       [1, -1,  1, -1],
-                       [1,  1, -1, -1]])
-        W = (1/4) * np.matrix([[ 0,  1,  1, -1],
-                               [ 1,  0, -1,  1],
-                               [ 1, -1,  0,  1],
-                               [-1,  1,  1,  0]])
-
         self.assertFalse(self.net.fitted_)  # initial value should be False.
 
-        self.net.fit(X)  # Fit the network to the patterns.
+        self.net.fit(self.patterns_B_X)  # Fit the network to the patterns.
 
         # Correct weight matrix
-        npt.assert_array_equal(self.net.W_, W)
+        npt.assert_array_equal(self.net.W_, self.patterns_B_W)
 
         self.assertEqual(self.net.p_, 3)  # Number of patterns
         self.assertEqual(self.net.n_, 4)  # Number of neurons
-        npt.assert_array_equal(self.net.patterns_, X)  # Patterns
+        npt.assert_array_equal(self.net.patterns_, self.patterns_B_X)
         self.assertTrue(self.net.fitted_)  # The model has been fitted
         self.assertEqual(self.net.patterns_to_neurons_ratio(), 3/4)
 
