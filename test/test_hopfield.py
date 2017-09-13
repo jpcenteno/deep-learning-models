@@ -22,6 +22,7 @@ class HopfieldNetworkTest(unittest.TestCase):
                                                [ 1,  0, -1,  1],
                                                [ 1, -1,  0,  1],
                                                [-1,  1,  1,  0]])
+
     def test_fit(self):
         '''
         Tests that the `fit` method yields the correct state for some simple
@@ -40,6 +41,20 @@ class HopfieldNetworkTest(unittest.TestCase):
         npt.assert_array_equal(net.patterns_, self.patterns_B_X)  # patterns
         self.assertTrue(net.fitted_)  # The model has been fitted
         self.assertEqual(net.patterns_to_neurons_ratio(), 3/4)
+
+    def test_fit_patterns_are_conmutative(self):
+        '''
+        Given a matrix of patterns and a permutation of it's rows (the
+        patterns), both should fit to the same weights matrix.
+
+        Asserts that the order of the patterns does not matter.
+        '''
+        X_permutation = self.patterns_B_X[[2, 0, 1]]
+        net1 = HopfieldNetwork()
+        net1.fit(self.patterns_B_X)
+        net2 = HopfieldNetwork()
+        net2.fit(X_permutation)
+        npt.assert_array_equal(net1.W_, net2.W_)
 
     def test_predict(self):
         pass  # TODO
